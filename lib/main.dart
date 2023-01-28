@@ -1,5 +1,5 @@
-import 'package:big_red/pages/signup_options.dart';
-// import 'package:big_red/pages/splash_screen.dart';
+// import 'package:big_red/pages/signup_options.dart';
+import 'package:big_red/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SignupOptions(),
+      home: SplashScreen(),
     );
   }
 }

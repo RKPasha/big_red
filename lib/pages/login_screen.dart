@@ -1,7 +1,9 @@
 import 'package:big_red/pages/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:validators/validators.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,18 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isEmailCorrect = false;
   bool _hidePassword = true;
   final _formKey = GlobalKey<FormState>();
-
-  String? passwordValidator(String value) {
-    String pattern =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-    RegExp regExp = RegExp(pattern);
-    if (value.isEmpty) {
-      return "Password is required";
-    } else if (!regExp.hasMatch(value)) {
-      return "Password must have at least one uppercase letter, one lowercase letter, one number, and one special character";
-    }
-    return null;
-  }
 
   @override
   void dispose() {
@@ -73,9 +63,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
                 Container(
-                  height: 50,
+                  height: 70,
                   margin: const EdgeInsets.all(10.0),
                   child: TextFormField(
                     controller: _textEditingController,
@@ -84,6 +74,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         isEmailCorrect = isEmail(val);
                         debugPrint('isEmailCorrect: $isEmailCorrect');
                       });
+                    },
+                    onTap: () {
+                      showTopSnackBar(
+                        Overlay.of(context)!,
+                        const CustomSnackBar.info(
+                          message:
+                              'Info: Login button will appear when you enter a valid Email',
+                        ),
+                      );
                     },
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.email),
@@ -98,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Container(
                   height: 70,
-                  margin: const EdgeInsets.all(10.0),
+                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Stack(
                     alignment: Alignment.centerRight,
                     children: <Widget>[
@@ -207,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 25),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[

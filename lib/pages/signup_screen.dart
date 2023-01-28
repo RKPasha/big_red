@@ -1,6 +1,8 @@
 import 'package:big_red/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:validators/validators.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -16,14 +18,17 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _hidePassword = true;
   final _formKey = GlobalKey<FormState>();
 
-  String? passwordValidator(String value) {
-    String pattern =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-    RegExp regExp = RegExp(pattern);
-    if (value.isEmpty) {
-      return "Password is required";
-    } else if (!regExp.hasMatch(value)) {
-      return "Password must have at least one uppercase letter, one lowercase letter, one number, and one special character";
+  String? passwordValidator(String? value) {
+    if (value!.length < 8) {
+      return 'Password must be at least 8 characters';
+    } else if (!value.contains(RegExp(r'[A-Z]'))) {
+      return 'Password must contain an uppercase letter';
+    } else if (!value.contains(RegExp(r'[a-z]'))) {
+      return 'Password must contain a lowercase letter';
+    } else if (!value.contains(RegExp(r'[0-9]'))) {
+      return 'Password must contain a number';
+    } else if (!value.contains(RegExp(r'[!@#\$%\^&\*?_~|]'))) {
+      return 'Password must contain a special character';
     }
     return null;
   }
@@ -73,9 +78,9 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
                 Container(
-                  height: 50,
+                  height: 70,
                   margin: const EdgeInsets.all(10.0),
                   child: TextFormField(
                     controller: _textEditingController,
@@ -84,6 +89,15 @@ class _SignupScreenState extends State<SignupScreen> {
                         isEmailCorrect = isEmail(val);
                         debugPrint('isEmailCorrect: $isEmailCorrect');
                       });
+                    },
+                    onTap: () {
+                      showTopSnackBar(
+                        Overlay.of(context)!,
+                        const CustomSnackBar.info(
+                          message:
+                              'Info: Sign up button will appear when you enter a valid Email',
+                        ),
+                      );
                     },
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.email),
@@ -98,7 +112,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 Container(
                   height: 70,
-                  margin: const EdgeInsets.all(10.0),
+                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Stack(
                     alignment: Alignment.centerRight,
                     children: <Widget>[
@@ -112,15 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Password is required";
-                          }
-                          if (value.length < 8) {
-                            return "Password must be at least 8 characters";
-                          }
-                          return null;
-                        },
+                        validator: passwordValidator,
                       ),
                       TextButton(
                           onPressed: () {
@@ -140,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
+                // const SizedBox(height: 10),
                 isEmailCorrect
                     ? Container(
                         margin: const EdgeInsets.all(10.0),
@@ -197,7 +203,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 25),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
