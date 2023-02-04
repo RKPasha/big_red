@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignupOptions extends StatelessWidget {
+  static String routeName = '/signup_options';
   const SignupOptions({super.key});
 
   @override
@@ -66,6 +67,24 @@ class SignupOptions extends StatelessWidget {
               onPressed: () {},
             ),
           ),
+          // Container(
+          //   height: 50,
+          //   margin: const EdgeInsets.all(10.0),
+          //   child: OutlinedButton(
+          //     child: Row(
+          //       children: <Widget>[
+          //         Image.asset('assets/images/mobile.png',
+          //             width: 30, height: 30),
+          //         const SizedBox(width: 10),
+          //         const Text(
+          //           'Continue with Phone',
+          //           style: TextStyle(color: Colors.black, fontSize: 16),
+          //         ),
+          //       ],
+          //     ),
+          //     onPressed: () {},
+          //   ),
+          // ),
           const SizedBox(height: 10),
           Container(
             alignment: Alignment.center,

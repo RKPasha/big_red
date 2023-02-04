@@ -1,26 +1,41 @@
 import 'package:big_red/pages/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:validators/validators.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
+import '../services/firebase_auth_methods.dart';
+
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  static String routeName = '/login';
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  void loginUser() {
+    context.read<FirebaseAuthMethods>().loginWithEmail(
+          email: emailController.text,
+          password: passwordController.text,
+          context: context,
+        );
+  }
+
   bool isEmailCorrect = false;
   bool _hidePassword = true;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    _textEditingController.clear();
+    emailController.clear();
+    passwordController.clear();
     super.dispose();
   }
 
@@ -68,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 70,
                   margin: const EdgeInsets.all(10.0),
                   child: TextFormField(
-                    controller: _textEditingController,
+                    controller: emailController,
                     onChanged: (val) {
                       setState(() {
                         isEmailCorrect = isEmail(val);
@@ -103,8 +118,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
                       TextFormField(
                         obscureText: _hidePassword,
+                        controller: passwordController,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              _hidePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                _hidePassword = !_hidePassword;
+                              });
+                            },
+                          ),
                           labelText: "Password",
                           hintText: '***********',
                           border: OutlineInputBorder(
@@ -121,21 +152,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                       ),
-                      TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _hidePassword = !_hidePassword;
-                            });
-                          },
-                          child: _hidePassword
-                              ? const Icon(
-                                  Icons.visibility_off,
-                                  color: Colors.grey,
-                                )
-                              : const Icon(
-                                  Icons.visibility,
-                                  color: Colors.grey,
-                                )),
                     ],
                   ),
                 ),
@@ -154,9 +170,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
+                              loginUser();
                               // use the email provided here
-                              debugPrint(
-                                  'Email: ${_textEditingController.text}');
+                              debugPrint('Email: ${emailController.text}');
                             }
                           },
                         ),
@@ -204,6 +220,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: 30, height: 30),
                       ),
                     ),
+                    // const SizedBox(width: 10),
+                    // OutlinedButton(
+                    //   onPressed: () {},
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(10.0),
+                    //     child: Image.asset('assets/images/mobile.png',
+                    //         width: 30, height: 30),
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 25),

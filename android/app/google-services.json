@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "101724279513",
+    "project_id": "big-red-auth",
+    "storage_bucket": "big-red-auth.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101724279513:android:bd3fbac0a09fdbbe22a4c8",
+        "android_client_info": {
+          "package_name": "com.pashaSolutions.big_red_auto_deals"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "101724279513-43h5ljts5dbrf1prvvi9qbp7ivs7k3jh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pashaSolutions.big_red_auto_deals",
+            "certificate_hash": "3d5e37319a67da1af3a5a35ef8c955da9f804924"
+          }
+        },
+        {
+          "client_id": "101724279513-pnkqopibrqtilhe72s1hd0q50l8tnmpn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ27w02YnzGqn23TWIZNn-ARR_IldbXvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "101724279513-pnkqopibrqtilhe72s1hd0q50l8tnmpn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "101724279513-9gktoau5ccae3cb4ic0saq32s8tin9sh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bigResAutoDeals.bigRed"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
