@@ -16,9 +16,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   _WelcomeScreenState() {
     Timer(const Duration(milliseconds: 4000), () {
       setState(() {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const SignupOptions()),
-            (route) => false);
+        // Navigator.of(context).pushAndRemoveUntil(
+        //     MaterialPageRoute(builder: (context) => const SignupOptions()),
+        //     (route) => false);
+        Navigator.pushReplacementNamed(context, SignupOptions.routeName);
       });
     });
 
@@ -48,6 +49,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 const SizedBox(height: 40),
                 Text(

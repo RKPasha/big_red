@@ -2,6 +2,9 @@ import 'package:big_red/pages/login_screen.dart';
 import 'package:big_red/pages/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../services/firebase_auth_methods.dart';
 
 class SignupOptions extends StatelessWidget {
   static String routeName = '/signup_options';
@@ -12,7 +15,7 @@ class SignupOptions extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          const SizedBox(height: 100),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.1),
           Center(
             child: Image.asset(
               'assets/images/logo.png',
@@ -46,7 +49,9 @@ class SignupOptions extends StatelessWidget {
                   ),
                 ],
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.read<FirebaseAuthMethods>().signInWithFacebook(context);
+              },
             ),
           ),
           Container(
@@ -64,7 +69,9 @@ class SignupOptions extends StatelessWidget {
                   ),
                 ],
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.read<FirebaseAuthMethods>().signInWithGoogle(context);
+              },
             ),
           ),
           // Container(
@@ -100,13 +107,14 @@ class SignupOptions extends StatelessWidget {
               child: const Text('Login in with Email',
                   style: TextStyle(color: Colors.white, fontSize: 16)),
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const LoginScreen();
-                    },
-                  ),
-                );
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (BuildContext context) {
+                //       return const LoginScreen();
+                //     },
+                //   ),
+                // );
+                Navigator.pushNamed(context, LoginScreen.routeName);
               },
             ),
           ),
@@ -119,13 +127,14 @@ class SignupOptions extends StatelessWidget {
                   const Text('Sign up', style: TextStyle(color: Colors.black)),
               onTap: () {
                 // Navigate to Signup screen
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const SignupScreen();
-                    },
-                  ),
-                );
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (BuildContext context) {
+                //       return const SignupScreen();
+                //     },
+                //   ),
+                // );
+                Navigator.pushNamed(context, SignupScreen.routeName);
               },
             ),
           ]),

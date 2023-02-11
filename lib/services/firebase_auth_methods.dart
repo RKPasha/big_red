@@ -1,15 +1,15 @@
+import 'package:big_red/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-import '../utils/showOTPDialog.dart';
-
 class FirebaseAuthMethods {
   final FirebaseAuth _auth;
+  // final _auth = FirebaseAuth.instance;
   FirebaseAuthMethods(this._auth);
 
   // FOR EVERY FUNCTION HERE
@@ -21,7 +21,7 @@ class FirebaseAuthMethods {
   User get user => _auth.currentUser!;
 
   // STATE PERSISTENCE STREAM
-  Stream<User?> get authState => FirebaseAuth.instance.authStateChanges();
+  Stream<User?> authStream() => _auth.authStateChanges();
   // OTHER WAYS (depends on use case):
   // Stream get authState => FirebaseAuth.instance.userChanges();
   // Stream get authState => FirebaseAuth.instance.idTokenChanges();
@@ -60,11 +60,12 @@ class FirebaseAuthMethods {
   }
 
   // EMAIL LOGIN
-  Future<void> loginWithEmail({
+  Future<bool> loginWithEmail({
     required String email,
     required String password,
     required BuildContext context,
   }) async {
+    Future<bool> val = Future.value(false);
     try {
       await _auth.signInWithEmailAndPassword(
         email: email,
@@ -72,17 +73,13 @@ class FirebaseAuthMethods {
       );
       if (!user.emailVerified) {
         await sendEmailVerification(context);
+        val = Future.value(false);
         // restrict access to certain things using provider
         // transition to another page instead of home screen
       } else {
-        // allow access to certain things using provider
-        // transition to home screen
-        showTopSnackBar(
-          Overlay.of(context)!,
-          CustomSnackBar.success(
-            message: '${user.email} logged in successfully!',
-          ),
-        );
+        val = Future.value(true);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
       }
     } on FirebaseAuthException catch (e) {
       showTopSnackBar(
@@ -92,6 +89,7 @@ class FirebaseAuthMethods {
         ),
       ); // Displaying the error message
     }
+    return val;
   }
 
   // EMAIL VERIFICATION
@@ -115,49 +113,53 @@ class FirebaseAuthMethods {
   }
 
   // GOOGLE SIGN IN
-  // Future<void> signInWithGoogle(BuildContext context) async {
-  //   try {
-  //     if (kIsWeb) {
-  //       GoogleAuthProvider googleProvider = GoogleAuthProvider();
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      if (kIsWeb) {
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
-  //       googleProvider
-  //           .addScope('https://www.googleapis.com/auth/contacts.readonly');
+        googleProvider
+            .addScope('https://www.googleapis.com/auth/contacts.readonly');
 
-  //       await _auth.signInWithPopup(googleProvider);
-  //     } else {
-  //       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        await _auth.signInWithPopup(googleProvider);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+      } else {
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-  //       final GoogleSignInAuthentication? googleAuth =
-  //           await googleUser?.authentication;
+        final GoogleSignInAuthentication? googleAuth =
+            await googleUser?.authentication;
 
-  //       if (googleAuth?.accessToken != null && googleAuth?.idToken != null) {
-  //         // Create a new credential
-  //         final credential = GoogleAuthProvider.credential(
-  //           accessToken: googleAuth?.accessToken,
-  //           idToken: googleAuth?.idToken,
-  //         );
-  //         UserCredential userCredential =
-  //             await _auth.signInWithCredential(credential);
+        if (googleAuth?.accessToken != null && googleAuth?.idToken != null) {
+          // Create a new credential
+          final credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth?.accessToken,
+            idToken: googleAuth?.idToken,
+          );
+          UserCredential userCredential =
+              await _auth.signInWithCredential(credential);
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
 
-  //         // if you want to do specific task like storing information in firestore
-  //         // only for new users using google sign in (since there are no two options
-  //         // for google sign in and google sign up, only one as of now),
-  //         // do the following:
+          // if you want to do specific task like storing information in firestore
+          // only for new users using google sign in (since there are no two options
+          // for google sign in and google sign up, only one as of now),
+          // do the following:
 
-  //         // if (userCredential.user != null) {
-  //         //   if (userCredential.additionalUserInfo!.isNewUser) {}
-  //         // }
-  //       }
-  //     }
-  //   } on FirebaseAuthException catch (e) {
-  //     showTopSnackBar(
-  //       Overlay.of(context)!,
-  //       CustomSnackBar.error(
-  //         message: e.message!,
-  //       ),
-  //     ); // Displaying the error message
-  //   }
-  // }
+          // if (userCredential.user != null) {
+          //   if (userCredential.additionalUserInfo!.isNewUser) {}
+          // }
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      showTopSnackBar(
+        Overlay.of(context)!,
+        CustomSnackBar.error(
+          message: e.message!,
+        ),
+      ); // Displaying the error message
+    }
+  }
 
   // ANONYMOUS SIGN IN
   // Future<void> signInAnonymously(BuildContext context) async {
@@ -174,23 +176,25 @@ class FirebaseAuthMethods {
   // }
 
   // FACEBOOK SIGN IN
-  // Future<void> signInWithFacebook(BuildContext context) async {
-  //   try {
-  //     final LoginResult loginResult = await FacebookAuth.instance.login();
+  Future<void> signInWithFacebook(BuildContext context) async {
+    try {
+      final LoginResult loginResult = await FacebookAuth.instance.login();
 
-  //     final OAuthCredential facebookAuthCredential =
-  //         FacebookAuthProvider.credential(loginResult.accessToken!.token);
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-  //     await _auth.signInWithCredential(facebookAuthCredential);
-  //   } on FirebaseAuthException catch (e) {
-  //     showTopSnackBar(
-  //       Overlay.of(context)!,
-  //       CustomSnackBar.error(
-  //         message: e.message!,
-  //       ),
-  //     ); // Displaying the error message
-  //   }
-  // }
+      await _auth.signInWithCredential(facebookAuthCredential);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+    } on FirebaseAuthException catch (e) {
+      showTopSnackBar(
+        Overlay.of(context)!,
+        CustomSnackBar.error(
+          message: e.message!,
+        ),
+      ); // Displaying the error message
+    }
+  }
 
   // SIGN OUT
   Future<void> signOut(BuildContext context) async {
@@ -204,6 +208,35 @@ class FirebaseAuthMethods {
         ),
       ); // Displaying the error message
     }
+  }
+
+  //Forgot password
+  Future<bool> resetPassword({
+    required String email,
+    required BuildContext context,
+  }) async {
+    Future<bool> val = Future.value(false);
+    try {
+      await _auth.sendPasswordResetEmail(email: email).then((value) {
+        showTopSnackBar(
+          Overlay.of(context)!,
+          const CustomSnackBar.info(
+            message: 'Password reset email sent!',
+          ),
+        );
+        val = Future.value(true);
+        Navigator.of(context).pop();
+      });
+    } on FirebaseAuthException catch (e) {
+      showTopSnackBar(
+        Overlay.of(context)!,
+        CustomSnackBar.error(
+          message: e.message!,
+        ),
+      );
+      val = Future.value(false); // Displaying the error message
+    }
+    return val;
   }
 
   // DELETE ACCOUNT

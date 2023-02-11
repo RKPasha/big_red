@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:big_red/pages/welcome_screen.dart';
+import 'package:big_red/pages/signup_options.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,8 +16,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(milliseconds: 2000), () {
       setState(() {
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+            MaterialPageRoute(builder: (context) => const SignupOptions()),
             (route) => false);
+        // Navigator.pushReplacementNamed(context, SignupOptions.routeName);
       });
     });
 
@@ -30,12 +31,19 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: AnimatedOpacity(
         opacity: _isVisible ? 1.0 : 0,
-        duration: const Duration(milliseconds: 1000),
+        duration: const Duration(milliseconds: 2000),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

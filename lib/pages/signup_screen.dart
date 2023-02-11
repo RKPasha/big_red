@@ -1,3 +1,4 @@
+import 'package:big_red/pages/home_page.dart';
 import 'package:big_red/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,11 +21,13 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   void signUpUser() async {
-    context.read<FirebaseAuthMethods>().signUpWithEmail(
+    await context.read<FirebaseAuthMethods>().signUpWithEmail(
           email: emailController.text,
           password: passwordController.text,
           context: context,
         );
+    if (!mounted) return;
+    Navigator.of(context).pop();
   }
 
   bool isEmailCorrect = false;
@@ -64,7 +67,7 @@ class _SignupScreenState extends State<SignupScreen> {
               children: <Widget>[
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 25, left: 10),
+                  margin: const EdgeInsets.only(top: 15, left: 10),
                   child: IconButton(
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -79,8 +82,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 Center(
                   child: Image.asset(
                     'assets/images/logo.png',
-                    width: 230.0,
-                    height: 230.0,
+                    width: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.3,
                   ),
                 ),
                 Text(
@@ -200,7 +203,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context
+                            .read<FirebaseAuthMethods>()
+                            .signInWithFacebook(context);
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(8.1),
                         child: Image.asset('assets/images/facebook.png',
@@ -209,7 +216,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     const SizedBox(width: 10),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context
+                            .read<FirebaseAuthMethods>()
+                            .signInWithGoogle(context);
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Image.asset('assets/images/google.png',
@@ -237,14 +248,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: const Text('Login',
                             style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          // Navigate to login screen
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                return const LoginScreen();
-                              },
-                            ),
-                          );
+                          Navigator.pushReplacementNamed(
+                              context, LoginScreen.routeName);
                         },
                       ),
                     ]),

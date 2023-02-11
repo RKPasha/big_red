@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">Big-Red-auth</string>
+    <string name="facebook_app_id">739581740811484</string>
+    <string name="fb_login_protocol_scheme">fb739581740811484</string>
+    <string name="facebook_client_token">18d8632fcd0347978f5206ebf004fb42</string>
+</resources>
