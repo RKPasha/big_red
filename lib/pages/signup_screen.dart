@@ -1,4 +1,3 @@
-import 'package:big_red/pages/home_page.dart';
 import 'package:big_red/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,12 +20,20 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   void signUpUser() async {
-    await context.read<FirebaseAuthMethods>().signUpWithEmail(
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(child: CircularProgressIndicator());
+        });
+    bool check = await context.read<FirebaseAuthMethods>().signUpWithEmail(
           email: emailController.text,
           password: passwordController.text,
           context: context,
         );
     if (!mounted) return;
+    if (check) {
+      Navigator.of(context).pop();
+    }
     Navigator.of(context).pop();
   }
 
@@ -37,9 +44,10 @@ class _SignupScreenState extends State<SignupScreen> {
   String? passwordValidator(String? value) {
     if (value!.length < 8) {
       return 'Password must be at least 8 characters';
-    } else if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'Password must contain an uppercase letter';
-    } else if (!value.contains(RegExp(r'[a-z]'))) {
+    } else // if (!value.contains(RegExp(r'[A-Z]'))) {
+    //   return 'Password must contain an uppercase letter';
+    // } else
+    if (!value.contains(RegExp(r'[a-z]'))) {
       return 'Password must contain a lowercase letter';
     } else if (!value.contains(RegExp(r'[0-9]'))) {
       return 'Password must contain a number';
@@ -104,12 +112,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     onChanged: (val) {
                       setState(() {
                         isEmailCorrect = isEmail(val);
-                        debugPrint('isEmailCorrect: $isEmailCorrect');
                       });
                     },
                     onTap: () {
                       showTopSnackBar(
-                        Overlay.of(context)!,
+                        Overlay.of(context),
                         const CustomSnackBar.info(
                           message:
                               'Info: Sign up button will appear when you enter a valid Email',
@@ -181,7 +188,6 @@ class _SignupScreenState extends State<SignupScreen> {
                               _formKey.currentState!.save();
                               signUpUser();
                               // use the email provided here
-                              debugPrint('Email: ${emailController.text}');
                             }
                           },
                         ),

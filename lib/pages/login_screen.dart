@@ -1,5 +1,4 @@
 import 'package:big_red/pages/forgot_password_screen.dart';
-import 'package:big_red/pages/home_page.dart';
 import 'package:big_red/pages/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -96,12 +95,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (val) {
                     setState(() {
                       isEmailCorrect = isEmail(val);
-                      debugPrint('isEmailCorrect: $isEmailCorrect');
                     });
                   },
                   onTap: () {
                     showTopSnackBar(
-                      Overlay.of(context)!,
+                      Overlay.of(context),
                       const CustomSnackBar.info(
                         message:
                             'Info: Login button will appear when you enter a valid Email',

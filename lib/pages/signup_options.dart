@@ -1,5 +1,6 @@
 import 'package:big_red/pages/login_screen.dart';
 import 'package:big_red/pages/signup_screen.dart';
+import 'package:big_red/utils/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -12,10 +13,12 @@ class SignupOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+    // ThemeProvider themeProvider = ThemeProvider();
     return Scaffold(
       body: Column(
         children: <Widget>[
-          SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+          // SizedBox(height: MediaQuery.of(context).size.height * 0.1),
           Center(
             child: Image.asset(
               'assets/images/logo.png',
@@ -43,9 +46,12 @@ class SignupOptions extends StatelessWidget {
                   Image.asset('assets/images/facebook.png',
                       width: 35, height: 35),
                   const SizedBox(width: 10),
-                  const Text(
+                  Text(
                     'Continue with Facebook',
-                    style: TextStyle(color: Colors.black, fontSize: 16),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color:
+                            themeProvider.isDark ? Colors.white : Colors.black),
                   ),
                 ],
               ),
@@ -63,9 +69,12 @@ class SignupOptions extends StatelessWidget {
                   Image.asset('assets/images/google.png',
                       width: 30, height: 30),
                   const SizedBox(width: 10),
-                  const Text(
+                  Text(
                     'Continue with Google',
-                    style: TextStyle(color: Colors.black, fontSize: 16),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color:
+                            themeProvider.isDark ? Colors.white : Colors.black),
                   ),
                 ],
               ),
@@ -95,7 +104,7 @@ class SignupOptions extends StatelessWidget {
           const SizedBox(height: 10),
           Container(
             alignment: Alignment.center,
-            child: const Text('or', style: TextStyle(color: Colors.black)),
+            child: const Text('or'),
           ),
           const SizedBox(height: 10),
           Container(
@@ -107,37 +116,36 @@ class SignupOptions extends StatelessWidget {
               child: const Text('Login in with Email',
                   style: TextStyle(color: Colors.white, fontSize: 16)),
               onPressed: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (BuildContext context) {
-                //       return const LoginScreen();
-                //     },
-                //   ),
-                // );
                 Navigator.pushNamed(context, LoginScreen.routeName);
               },
             ),
           ),
           const SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            const Text('Don\'t have an account? ',
-                style: TextStyle(color: Colors.grey)),
+            Text('Don\'t have an account? ',
+                style: TextStyle(color: Colors.grey[600])),
             InkWell(
-              child:
-                  const Text('Sign up', style: TextStyle(color: Colors.black)),
+              child: const Text('Sign up',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               onTap: () {
-                // Navigate to Signup screen
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (BuildContext context) {
-                //       return const SignupScreen();
-                //     },
-                //   ),
-                // );
                 Navigator.pushNamed(context, SignupScreen.routeName);
               },
             ),
           ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.dark_mode),
+              const Text('Dark Mode'),
+              Switch(
+                value: themeProvider.isDark,
+                onChanged: (value) {
+                  themeProvider.toggleTheme();
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );

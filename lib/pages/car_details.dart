@@ -60,6 +60,7 @@ class InfoRow extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '$title: ',
@@ -68,7 +69,7 @@ class InfoRow extends StatelessWidget {
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.1,
           ),
-          Text(desc, style: const TextStyle(fontSize: 26)),
+          Expanded(child: Text(desc, style: const TextStyle(fontSize: 26))),
         ],
       ),
     );

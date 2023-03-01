@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "101724279513",
+    "firebase_url": "https://big-red-auth-default-rtdb.firebaseio.com",
     "project_id": "big-red-auth",
     "storage_bucket": "big-red-auth.appspot.com"
   },
@@ -22,7 +23,7 @@
           }
         },
         {
-          "client_id": "101724279513-pnkqopibrqtilhe72s1hd0q50l8tnmpn.apps.googleusercontent.com",
+          "client_id": "101724279513-m7rgmaukdhp6ba2pjg5tdb29i9qit35n.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -35,7 +36,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "101724279513-pnkqopibrqtilhe72s1hd0q50l8tnmpn.apps.googleusercontent.com",
+              "client_id": "101724279513-m7rgmaukdhp6ba2pjg5tdb29i9qit35n.apps.googleusercontent.com",
               "client_type": 3
             },
             {

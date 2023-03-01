@@ -52,6 +52,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '101724279513',
     projectId: 'big-red-auth',
     authDomain: 'big-red-auth.firebaseapp.com',
+    databaseURL: 'https://big-red-auth-default-rtdb.firebaseio.com',
     storageBucket: 'big-red-auth.appspot.com',
   );
 
@@ -60,6 +61,7 @@ class DefaultFirebaseOptions {
     appId: '1:101724279513:android:bd3fbac0a09fdbbe22a4c8',
     messagingSenderId: '101724279513',
     projectId: 'big-red-auth',
+    databaseURL: 'https://big-red-auth-default-rtdb.firebaseio.com',
     storageBucket: 'big-red-auth.appspot.com',
   );
 
@@ -68,7 +70,9 @@ class DefaultFirebaseOptions {
     appId: '1:101724279513:ios:12961f2c647fb5d922a4c8',
     messagingSenderId: '101724279513',
     projectId: 'big-red-auth',
+    databaseURL: 'https://big-red-auth-default-rtdb.firebaseio.com',
     storageBucket: 'big-red-auth.appspot.com',
+    androidClientId: '101724279513-43h5ljts5dbrf1prvvi9qbp7ivs7k3jh.apps.googleusercontent.com',
     iosClientId: '101724279513-9gktoau5ccae3cb4ic0saq32s8tin9sh.apps.googleusercontent.com',
     iosBundleId: 'com.bigResAutoDeals.bigRed',
   );

@@ -66,7 +66,7 @@ class _ManageAccountsState extends State<ManageAccounts> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.only(left: 10, right: 50),
               child: const Text(
-                'Add another account - so you can switchbetween them easily.',
+                'Add another account - so you can switch between them easily.',
                 style: TextStyle(fontSize: 18, color: Colors.grey),
               )),
           const SizedBox(height: 15),
