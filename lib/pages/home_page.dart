@@ -7,7 +7,6 @@ import 'package:big_red/pages/services_form.dart';
 import 'package:big_red/services/services.dart';
 import 'package:big_red/services/userServices.dart';
 import 'package:big_red/utils/side_navbar.dart';
-import 'package:big_red/utils/theme_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -73,6 +72,11 @@ class _HomePageState extends State<HomePage> {
                     builder:
                         (context, AsyncSnapshot<List<ServicesModel>> snapshot) {
                       if (snapshot.hasData) {
+                        if (snapshot.data!.isEmpty) {
+                          return const Center(
+                            child: Text('No Services Available 🙂'),
+                          );
+                        }
                         List<ServicesModel>? services = snapshot.data;
                         return ListView.builder(
                           itemCount: snapshot.data!.length,

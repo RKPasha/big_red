@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:big_red/services/custom_enums.dart';
+import 'package:big_red/utils/uc_textFormField.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -214,47 +216,28 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 10.0),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null ||
-                          value.isEmpty ||
-                          !isValidName(value.trim())) {
-                        return 'Please enter valid name';
-                      }
-                      return null;
-                    },
+                  UcTextFormField(
+                    textController: _nameController,
+                    labelText: 'Name',
+                    haveValidator: true,
+                    validatorType: ValidatorType.name,
                   ),
                   const SizedBox(height: 10.0),
-                  TextFormField(
+                  UcTextFormField(
+                    textController: null,
+                    labelText: "Email",
                     readOnly: true,
+                    haveValidator: false,
                     initialValue: user.email,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                    ),
                   ),
                   const SizedBox(height: 10.0),
-                  TextFormField(
-                    controller: _contactNumberController,
+                  UcTextFormField(
+                    textController: _contactNumberController,
                     keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                        labelText: 'Contact Number',
-                        border: OutlineInputBorder(),
-                        hintText: '+1xxxxxxxxxx'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        if (!isPhoneNumber(value!)) {
-                          return 'Please enter valid contact number';
-                        }
-                        return null;
-                      }
-                      return null;
-                    },
+                    labelText: 'Contact Number',
+                    hintText: '+1xxxxxxxxxx',
+                    haveValidator: true,
+                    validatorType: ValidatorType.phone,
                   ),
                   const SizedBox(height: 10.0),
                   FutureBuilder<List<StatesModel>>(
@@ -322,8 +305,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             }).toList(),
                             onChanged: (value) {
                               _selectedCity = value;
-                              // setState(() {
-                              // });
                             },
                             // validator: (value) {
                             //   if (value == null) {
@@ -353,29 +334,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
                   const SizedBox(height: 10.0),
-                  TextFormField(
-                    controller: _dobController,
-                    decoration: InputDecoration(
-                      labelText: 'Date of Birth (optional)',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
-                          DateTime? selectedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.parse(widget.usersModel.dob!),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime.now(),
-                          );
-                          if (selectedDate != null) {
-                            _dobController.text = DateFormat.yMMMMd()
-                                .format(selectedDate)
-                                .toString();
-                            // setState(() {
-                            // });
-                          }
-                        },
-                      ),
+                  UcTextFormField(
+                    textController: _dobController,
+                    labelText: 'Date of Birth (optional)',
+                    haveValidator: false,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () async {
+                        DateTime? selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.parse(widget.usersModel.dob!),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (selectedDate != null) {
+                          _dobController.text = DateFormat.yMMMMd()
+                              .format(selectedDate)
+                              .toString();
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(height: 10.0),

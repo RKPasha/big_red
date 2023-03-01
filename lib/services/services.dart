@@ -9,20 +9,20 @@ class Service {
   static String url = 'https://pcc.edu.pk/ws/bscs2020/services.php';
 
   static Future<List<ServicesModel>> getData() async {
-    var response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      try {
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
         String content = response.body;
         List collection = json.decode(content);
         List<ServicesModel> services =
             collection.map((json) => ServicesModel.fromJson(json)).toList();
         return services;
-      } catch (error) {
-        return [];
+      } else {
+        throw Exception('Failed to load services');
+        // return cars;
       }
-    } else {
-      throw Exception('Failed to load services');
-      // return cars;
+    } catch (error) {
+      return [];
     }
   }
 
