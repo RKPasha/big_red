@@ -1,3 +1,5 @@
+import 'package:big_red/pages/Admin/admin_home.dart';
+import 'package:big_red/pages/User/user_home.dart';
 import 'package:big_red/pages/forgot_password_screen.dart';
 import 'package:big_red/pages/home_page.dart';
 import 'package:big_red/pages/login_screen.dart';
@@ -6,6 +8,7 @@ import 'package:big_red/pages/signup_screen.dart';
 import 'package:big_red/pages/splash_screen.dart';
 import 'package:big_red/services/firebase_auth_methods.dart';
 import 'package:big_red/utils/theme_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -67,6 +70,7 @@ class MyApp extends StatelessWidget {
                 LoginScreen.routeName: (context) => const LoginScreen(),
                 ForgotPasswordScreen.routeName: (context) =>
                     const ForgotPasswordScreen(),
+                SplashScreen.routeName: (context) => const SplashScreen(),
               },
             ),
           );
@@ -85,10 +89,42 @@ class AuthWrapper extends StatelessWidget {
       body: StreamBuilder(
         stream: context.read<FirebaseAuthMethods>().authStream(),
         builder: ((context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
           if (snapshot.hasData) {
-            return HomePage(user: snapshot.data as User);
+            User? user = snapshot.data;
+            return FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user!.uid)
+                  .get(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> documentSnapshot) {
+                if (documentSnapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (!documentSnapshot.hasData ||
+                    !documentSnapshot.data!.exists) {
+                  return const LoginScreen();
+                }
+                String role = documentSnapshot.data!.get('role');
+                if (role == "admin") {
+                  return AdminHomePage(user: user);
+                } else if (role == "user") {
+                  return UserHomePage(user: user);
+                } else {
+                  return const SplashScreen();
+                }
+              },
+            );
           } else {
-            return const SplashScreen();
+            // user is not authenticated, navigate to login screen
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushReplacementNamed(context, '/splash');
+            });
+            return const SizedBox.shrink();
           }
         }),
       ),

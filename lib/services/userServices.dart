@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:big_red/models/statesModel.dart';
 import 'package:big_red/models/usersModel.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
   static Future<UsersModel> getUserFromDatabase(String userId) async {
-    final ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child('users/$userId').get();
+    final ref = FirebaseFirestore.instance.collection('users').doc(userId);
+    final snapshot = await ref.get();
     if (snapshot.exists) {
-      final data = snapshot.value as Map<Object?, Object?>;
+      final data = snapshot.data() as Map<Object?, Object?>;
       final json = Map<String, dynamic>.from(data).cast<String, dynamic>();
       return UsersModel.fromJson(json);
       // debugPrint(_usersModel.name);
@@ -23,10 +23,9 @@ class UserService {
 
   static Future<void> updateUserToDatabase(
       UsersModel usersModel, BuildContext context) async {
-    await FirebaseDatabase.instance
-        .ref()
-        .child('users')
-        .child(usersModel.uid)
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(usersModel.uid)
         .update({
       'name': usersModel.name,
       'phone': usersModel.phone,

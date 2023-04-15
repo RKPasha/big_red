@@ -1,6 +1,5 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,13 +42,13 @@ class FirebaseAuthMethods {
         password: password,
       )
           .then((value) {
-        FirebaseDatabase.instance
-            .ref()
-            .child('users')
-            .child(value.user!.uid)
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(value.user!.uid)
             .set({
           'uid': value.user!.uid,
           'email': value.user!.email,
+          'role': 'user',
           'createdOn': DateFormat.yMMMMd()
               .format(value.user!.metadata.creationTime!)
               .toString(),
@@ -129,6 +128,7 @@ class FirebaseAuthMethods {
           message: 'Email verification sent!',
         ),
       );
+      _auth.signOut();
     } on FirebaseAuthException catch (e) {
       showTopSnackBar(
         Overlay.of(context),
@@ -196,16 +196,16 @@ class FirebaseAuthMethods {
   }
 
   Future<void> saveGoogleLoginInfo(UserCredential user) async {
-    await FirebaseDatabase.instance
-        .ref()
-        .child('users')
-        .child(user.user!.uid)
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.user!.uid)
         .set({
       'uid': user.user!.uid,
       'email': user.user!.email,
       'name': user.user!.displayName,
       'photo': user.user!.photoURL,
       'phone': user.user!.phoneNumber.toString(),
+      'role': 'user',
       'createdOn': DateFormat.yMMMMd()
           .format(user.user!.metadata.creationTime!)
           .toString(),
@@ -295,11 +295,11 @@ class FirebaseAuthMethods {
   Future<void> deleteAccount(BuildContext context) async {
     try {
       //Delete user data from firebase storage first
-      final dbRef = FirebaseDatabase.instance.ref();
-      final user = dbRef.child('users/${_auth.currentUser!.uid}');
+      final dbRef = FirebaseFirestore.instance.collection('users');
+      final user = dbRef.doc('users/${_auth.currentUser!.uid}');
       final snapshot = await user.get();
       if (snapshot.exists) {
-        await user.remove();
+        await user.delete();
       }
       final stRef = FirebaseStorage.instance.ref();
       if (_auth.currentUser!.photoURL == null) {
@@ -320,6 +320,63 @@ class FirebaseAuthMethods {
       ); // Displaying the error message
       // if an error of requires-recent-login is thrown, make sure to log
       // in user again and then delete account.
+    }
+  }
+
+  // UPDATE EMAIL
+  Future<void> updateEmail({
+    required String email,
+    required BuildContext context,
+  }) async {
+    try {
+      await _auth.currentUser!.updateEmail(email).then((value) {
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message: 'Email updated successfully!',
+          ),
+        );
+        _auth.currentUser!.sendEmailVerification();
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(_auth.currentUser!.uid)
+            .update({'email': email}).then((value) {
+          _auth.signOut();
+        });
+      });
+    } on FirebaseAuthException catch (e) {
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.error(
+          message: e.message!,
+        ),
+      ); // Displaying the error message
+    }
+  }
+
+  // UPDATE PASSWORD
+  Future<void> updatePassword({
+    required String password,
+    required BuildContext context,
+  }) async {
+    try {
+      await _auth.currentUser!.updatePassword(password).then((value) {
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message:
+                'Password updated successfully! Please login again to your account to continue.',
+          ),
+        );
+        _auth.signOut();
+      });
+    } on FirebaseAuthException catch (e) {
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.error(
+          message: e.message!,
+        ),
+      ); // Displaying the error message
     }
   }
 }

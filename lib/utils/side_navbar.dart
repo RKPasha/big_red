@@ -2,8 +2,8 @@ import 'package:big_red/models/usersModel.dart';
 import 'package:big_red/pages/manage_accounts.dart';
 import 'package:big_red/pages/profile_page.dart';
 import 'package:big_red/utils/theme_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -212,12 +212,13 @@ class _SideNavState extends State<SideNav> {
   }
 
   Future<void> _fetchImageUrlFromDatabase() async {
-    final ref = FirebaseDatabase.instance.ref('users/${widget.user.uid}');
-    final snapshot = await ref.child('photo').get();
+    final ref =
+        FirebaseFirestore.instance.collection('users').doc(widget.user.uid);
+    final snapshot = await ref.get();
 
     if (snapshot.exists) {
       setState(() {
-        _imageUrl = snapshot.value as String?;
+        _imageUrl = snapshot.data()!['photo'];
       });
     }
   }

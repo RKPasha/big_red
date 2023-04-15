@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:big_red/services/custom_enums.dart';
 import 'package:big_red/utils/uc_textFormField.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:big_red/services/firebase_auth_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -472,7 +472,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _saveImageUrlToDatabase(String imageUrl) async {
-    await FirebaseDatabase.instance.ref('users').child(widget.user.uid).update({
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.user.uid)
+        .update({
       'photo': imageUrl,
     }).then((value) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -483,13 +486,25 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  // Future<void> _fetchImageUrlFromDatabase() async {
+  //   final ref = FirebaseDatabase.instance.ref('users/${widget.user.uid}');
+  //   final snapshot = await ref.child('photo').get();
+
+  //   if (snapshot.exists) {
+  //     setState(() {
+  //       _imageUrl = snapshot.value as String?;
+  //     });
+  //   }
+  // }
+
   Future<void> _fetchImageUrlFromDatabase() async {
-    final ref = FirebaseDatabase.instance.ref('users/${widget.user.uid}');
-    final snapshot = await ref.child('photo').get();
+    final ref =
+        FirebaseFirestore.instance.collection('users').doc(widget.user.uid);
+    final snapshot = await ref.get();
 
     if (snapshot.exists) {
       setState(() {
-        _imageUrl = snapshot.value as String?;
+        _imageUrl = snapshot.data()!['photo'];
       });
     }
   }
