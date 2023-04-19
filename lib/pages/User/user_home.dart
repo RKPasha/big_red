@@ -1,5 +1,7 @@
 import 'package:big_red/models/usersModel.dart';
 import 'package:big_red/services/userServices.dart';
+import 'package:big_red/utils/custom_appBar.dart';
+import 'package:big_red/utils/custom_bootom_tabbar.dart';
 import 'package:big_red/utils/side_navbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,15 @@ class _UserHomePageState extends State<UserHomePage> {
     yield await UserService.getUserFromDatabase(widget.user.uid);
   }
 
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  int _currentIndex = 0;
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<UsersModel>(
@@ -25,33 +36,64 @@ class _UserHomePageState extends State<UserHomePage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Scaffold(
-              appBar: AppBar(
-                title: Center(
-                  child: Text('Big-Red Auto Sales',
-                      style: GoogleFonts.robotoSlab(
-                          textStyle: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ))),
-                ),
-                backgroundColor: Colors.red,
+              key: scaffoldKey,
+              appBar: CustomAppBar(
+                scaffoldKey: scaffoldKey,
+                searchHint: switchSearchHint(),
               ),
               drawer: SideNav(
                   user: widget.user, usersModel: snapshot.data as UsersModel),
-              // const Drawer(),
-              body: Center(
-                child: Text('User Home ${widget.user.email}'),
+              bottomNavigationBar: CustomBottomNavigationBar(
+                currentIndex: _currentIndex,
+                onTap: _onTabTapped,
               ),
+              body: _buildBody(),
             );
           } else if (snapshot.hasError) {
             return Center(
-                child: Text(
-                    'user fetch krny me msla aa rha hai ${snapshot.error}'));
+              child:
+                  Text('user fetch krny me msla aa rha hai ${snapshot.error}'),
+            );
           }
           return const Center(
               child: CircularProgressIndicator(
             color: Colors.red,
           ));
         });
+  }
+
+  Widget _buildBody() {
+    switch (_currentIndex) {
+      case 0:
+        // return CarsTab();
+        return const Center(
+          child: Text('Cars Tab'),
+        );
+      case 1:
+        // return ServicesTab();
+        return const Center(
+          child: Text('Services Tab'),
+        );
+      case 2:
+        // return ChatsTab();
+        return const Center(
+          child: Text('Chats Tab'),
+        );
+      default:
+        return Container();
+    }
+  }
+
+  switchSearchHint() {
+    switch (_currentIndex) {
+      case 0:
+        return 'Cars';
+      case 1:
+        return 'Services';
+      case 2:
+        return 'Chats';
+      default:
+        return 'Search';
+    }
   }
 }
