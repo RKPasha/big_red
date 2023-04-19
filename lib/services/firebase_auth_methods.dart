@@ -41,8 +41,9 @@ class FirebaseAuthMethods {
         email: email,
         password: password,
       )
-          .then((value) {
-        FirebaseFirestore.instance
+          .then((value) async {
+        debugPrint('value: ${value.user!.uid}');
+        await FirebaseFirestore.instance
             .collection('users')
             .doc(value.user!.uid)
             .set({
