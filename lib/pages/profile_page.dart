@@ -16,10 +16,13 @@ import 'package:big_red/services/userServices.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-
+import 'package:path/path.dart' as P;
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -413,7 +416,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return RegExp(r'^[0-9]+$').hasMatch(value);
   }
 
-  _selectFile(bool imageFrom) async {
+  Future<void> _selectFile(bool imageFrom) async {
     if (kIsWeb) {
       FilePickerResult? fileResult = await FilePicker.platform.pickFiles();
       if (fileResult != null) {
@@ -427,10 +430,25 @@ class _ProfilePageState extends State<ProfilePage> {
       final pickedFile = await picker.pickImage(
           source: imageFrom ? ImageSource.gallery : ImageSource.camera);
       if (pickedFile != null) {
-        setState(() {
-          _imageFile = pickedFile;
-          _imageUrl = pickedFile.name;
-        });
+        // setState(() {
+        //   _imageFile = pickedFile;
+        //   _imageUrl = pickedFile.name;
+        // });
+        final croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          aspectRatio: const CropAspectRatio(
+              ratioX: 1,
+              ratioY: 1), // Set the aspect ratio to 1:1 for a square image
+          maxHeight: 512, // Set the maximum height of the cropped image
+          maxWidth: 512, // Set the maximum width of the cropped image
+        );
+        if (croppedFile != null) {
+          setState(() {
+            _imageFile = XFile(croppedFile.path);
+            _imageUrl = _imageFile!.name;
+          });
+          debugPrint(_imageUrl);
+        }
       }
       debugPrint(_imageUrl);
     }
@@ -439,6 +457,15 @@ class _ProfilePageState extends State<ProfilePage> {
   _uploadImage() async {
     try {
       UploadTask uploadTask;
+      final newPath = P.join(
+          (await getTemporaryDirectory()).path, '${widget.user.uid}.jpeg');
+
+      final compressedImage = await FlutterImageCompress.compressAndGetFile(
+        _imageFile!.path,
+        newPath,
+        quality: 50, // adjust the image quality as needed
+      );
+
       if (kIsWeb) {
         final storageRef = FirebaseStorage.instance
             .ref()
@@ -449,7 +476,7 @@ class _ProfilePageState extends State<ProfilePage> {
         final storageRef = FirebaseStorage.instance
             .ref()
             .child('user_avatars/${widget.user.uid}}}');
-        uploadTask = storageRef.putFile(File(_imageFile!.path));
+        uploadTask = storageRef.putFile(File(compressedImage!.path));
       }
 
       final snapshot = await uploadTask.whenComplete(() {

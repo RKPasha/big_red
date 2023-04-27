@@ -4,9 +4,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final double appBarHeight = 65.0;
   final String searchHint;
+  final bool isDark;
+  final Function(String) onSearchQueryChanged;
 
   const CustomAppBar(
-      {Key? key, required this.scaffoldKey, required this.searchHint})
+      {Key? key,
+      required this.scaffoldKey,
+      required this.searchHint,
+      required this.isDark,
+      required this.onSearchQueryChanged})
       : super(key: key);
 
   @override
@@ -15,15 +21,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
+      backgroundColor:
+          isDark ? const Color.fromARGB(230, 14, 16, 1) : Colors.white,
+      elevation: 5,
       automaticallyImplyLeading: false,
       title: Row(
         children: [
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.menu,
-              color: Colors.black,
+              color: isDark ? Colors.white : Colors.black,
             ),
             onPressed: () {
               scaffoldKey.currentState!.openDrawer();
@@ -46,15 +53,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       border: InputBorder.none,
                       icon: const Icon(Icons.search),
                     ),
+                    onChanged: onSearchQueryChanged,
                   ),
                 ),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.notifications,
-              color: Colors.black,
+              color: isDark ? Colors.white : Colors.black,
             ),
             onPressed: () {
               // Open notifications screen

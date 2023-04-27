@@ -48,19 +48,62 @@ class _SideNavState extends State<SideNav> {
                   accountName: Text(widget.usersModel.name ?? ''),
                   accountEmail: Text(widget.user.email!),
                   currentAccountPicture: CircleAvatar(
-                      // backgroundImage: AssetImage('assets/images/person.png'),
-                      // backgroundColor: Colors.white,
-                      child: ClipOval(
-                    child: _imageUrl != null
-                        ? Image.network(
-                            _imageUrl!,
-                            fit: BoxFit.fill,
-                          )
-                        : const Image(
-                            image: AssetImage('assets/images/person.png'),
-                            fit: BoxFit.fill,
-                          ),
-                  )),
+                    // backgroundImage: AssetImage('assets/images/person.png'),
+                    backgroundColor: Colors.white,
+                    child: ClipOval(
+                      child: _imageUrl != null
+                          ? Image.network(
+                              _imageUrl!,
+                              fit: BoxFit.fill,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    child,
+                                    const CircularProgressIndicator(),
+                                  ],
+                                );
+                              },
+                            )
+                          : const SizedBox(
+                              width: 30.0,
+                              height: 30.0,
+                              child: CircularProgressIndicator(),
+                            ),
+                    ),
+
+                    // child: ClipOval(
+                    //   // child: _imageUrl != null
+                    //   //     ? Image.network(
+                    //   //         _imageUrl!,
+                    //   //         fit: BoxFit.fill,
+                    //   //       )
+                    //   //     : const Image(
+                    //   //         image: AssetImage('assets/images/person.png'),
+                    //   //         fit: BoxFit.fill,
+                    //   //       ),
+                    //   child: Stack(
+                    //     children: [
+                    //       if (_imageUrl != null)
+                    //         Image.network(
+                    //           _imageUrl!,
+                    //           fit: BoxFit.fill,
+                    //         )
+                    //       else
+                    //         Image.asset(
+                    //           'assets/images/person.png',
+                    //           fit: BoxFit.fill,
+                    //         ),
+                    //       if (_imageUrl == null)
+                    //         const Center(
+                    //           child: CircularProgressIndicator(),
+                    //         ),
+                    //     ],
+                    //   ),
+                    // )
+                  ),
                   decoration: const BoxDecoration(
                     color: Colors.red,
                     image: DecorationImage(

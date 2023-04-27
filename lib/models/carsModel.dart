@@ -2,111 +2,164 @@
 //
 //     final carsModel = carsModelFromJson(jsonString);
 
-import 'dart:convert';
+enum BodyType {
+  sedan,
+  suv,
+  hatchback,
+  coupe,
+  pickupTruck,
+  van,
+  wagon,
+}
 
-List<CarsModel> carsModelFromJson(String str) =>
-    List<CarsModel>.from(json.decode(str).map((x) => CarsModel.fromJson(x)));
+enum FuelType {
+  petrol,
+  diesel,
+  hybrid,
+  electric,
+}
 
-String carsModelToJson(List<CarsModel> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+enum TransmissionType {
+  manual,
+  automatic,
+}
+
+enum DriveType { frontWheel, rearWheel, allWheel, _4x4 }
+
+enum Condition {
+  New,
+  Used,
+}
+
+extension DriveTypeExtension on DriveType {
+  String get value => {
+        DriveType.frontWheel: 'Front Wheel Drive',
+        DriveType.rearWheel: 'Rear Wheel Drive',
+        DriveType.allWheel: 'All Wheel Drive',
+        DriveType._4x4: '4x4'
+      }[this]!;
+}
+
+extension BodyTypeExtension on BodyType {
+  String get value => {
+        BodyType.sedan: 'Sedan',
+        BodyType.suv: 'SUV',
+        BodyType.hatchback: 'Hatchback',
+        BodyType.coupe: 'Coupe',
+        BodyType.pickupTruck: 'Pickup Truck',
+        BodyType.van: 'Van',
+        BodyType.wagon: 'Wagon',
+      }[this]!;
+}
+
+extension FuelTypeExtension on FuelType {
+  String get value => {
+        FuelType.petrol: 'Petrol',
+        FuelType.diesel: 'Diesel',
+        FuelType.hybrid: 'Hybrid',
+        FuelType.electric: 'Electric',
+      }[this]!;
+}
+
+extension TransmissionTypeExtension on TransmissionType {
+  String get value => {
+        TransmissionType.manual: 'Manual',
+        TransmissionType.automatic: 'Automatic',
+      }[this]!;
+}
+
+extension ConditionExtension on Condition {
+  String get value => {
+        Condition.New: 'New',
+        Condition.Used: 'Used',
+      }[this]!;
+}
 
 class CarsModel {
   CarsModel({
-    required this.trimId,
+    required this.carId,
     required this.trim,
-    required this.makeId,
     required this.make,
-    required this.modelId,
     required this.model,
-    required this.generationId,
     required this.generation,
-    required this.bodyId,
-    required this.body,
-    required this.driveId,
-    required this.drive,
-    required this.gearboxId,
-    required this.gearbox,
-    required this.engineTypeId,
-    required this.engineType,
+    required this.bodyType,
+    required this.driveType,
+    required this.transmissionType,
+    required this.fuelType,
+    required this.condition,
     required this.engineVolume,
     required this.enginePower,
     required this.year,
-    required this.image,
+    required this.price,
+    this.imageUrls,
     required this.dateUpdate,
-    required this.isActive,
+    this.isActive,
+    this.isFeatured,
   });
 
-  String trimId;
+  String carId;
   String trim;
-  String makeId;
   String make;
-  String modelId;
   String model;
-  String generationId;
   String generation;
-  String bodyId;
-  String body;
-  String driveId;
-  String drive;
-  String gearboxId;
-  String gearbox;
-  String engineTypeId;
-  String engineType;
-  String engineVolume;
-  String enginePower;
+  BodyType bodyType;
+  DriveType driveType;
+  TransmissionType transmissionType;
+  FuelType fuelType;
+  Condition condition;
+  double engineVolume;
+  double enginePower;
   String year;
-  String image;
+  double price;
+  List<String>? imageUrls;
   DateTime dateUpdate;
-  String isActive;
+  bool? isActive = true;
+  bool? isFeatured = false;
 
   factory CarsModel.fromJson(Map<String, dynamic> json) => CarsModel(
-        trimId: json["trim_id"],
+        carId: json["carId"],
         trim: json["trim"],
-        makeId: json["make_id"],
         make: json["make"],
-        modelId: json["model_id"],
         model: json["model"],
-        generationId: json["generation_id"],
         generation: json["generation"],
-        bodyId: json["body_id"],
-        body: json["body"],
-        driveId: json["drive_id"],
-        drive: json["drive"],
-        gearboxId: json["gearbox_id"],
-        gearbox: json["gearbox"],
-        engineTypeId: json["engine_type_id"],
-        engineType: json["engine_type"],
-        engineVolume: json["engine_volume"],
-        enginePower: json["engine_power"],
+        bodyType: BodyType.values.firstWhere(
+            (type) => type.toString() == 'BodyType.${json['body_type']}'),
+        driveType: DriveType.values.firstWhere(
+            (type) => type.toString() == 'DriveType.${json['drive_type']}'),
+        transmissionType: TransmissionType.values.firstWhere((type) =>
+            type.toString() == 'TransmissionType.${json['transmission_type']}'),
+        fuelType: FuelType.values.firstWhere(
+            (type) => type.toString() == 'FuelType.${json['fuel_type']}'),
+        condition: Condition.values.firstWhere(
+            (type) => type.toString() == 'Condition.${json['condition']}'),
+        engineVolume: json["engine_volume"].toDouble(),
+        enginePower: json["engine_power"].toDouble(),
         year: json["year"],
-        image: json["image"],
+        price: json["price"].toDouble(),
+        imageUrls: List<String>.from(json["imageUrls"]),
         dateUpdate: DateTime.parse(json["date_update"]),
         isActive: json["is_active"],
+        isFeatured: json["is_featured"],
       );
 
   Map<String, dynamic> toJson() => {
-        "trim_id": trimId,
+        "carId": carId,
         "trim": trim,
-        "make_id": makeId,
         "make": make,
-        "model_id": modelId,
         "model": model,
-        "generation_id": generationId,
         "generation": generation,
-        "body_id": bodyId,
-        "body": body,
-        "drive_id": driveId,
-        "drive": drive,
-        "gearbox_id": gearboxId,
-        "gearbox": gearbox,
-        "engine_type_id": engineTypeId,
-        "engine_type": engineType,
+        "body_type": bodyType.toString().split('.').last,
+        "drive_type": driveType.toString().split('.').last,
+        "transmission_type": transmissionType.toString().split('.').last,
+        "fuel_type": fuelType.toString().split('.').last,
+        "condition": condition.toString().split('.').last,
         "engine_volume": engineVolume,
         "engine_power": enginePower,
         "year": year,
-        "image": image,
-        "date_update":
-            "${dateUpdate.year.toString().padLeft(4, '0')}-${dateUpdate.month.toString().padLeft(2, '0')}-${dateUpdate.day.toString().padLeft(2, '0')}",
-        "is_active": isActive,
+        "price": price,
+        "imageUrls": imageUrls,
+        "date_update": dateUpdate.toIso8601String(),
+        "is_active": isActive ?? true,
+        "is_featured": isFeatured ?? false,
       };
 }

@@ -2,7 +2,7 @@ import 'package:big_red/models/carsModel.dart';
 import 'package:big_red/models/servicesModel.dart';
 import 'package:big_red/models/usersModel.dart';
 // import 'package:big_red/pages/car_details.dart';
-import 'package:big_red/pages/services_details.dart';
+// import 'package:big_red/pages/services_details.dart';
 import 'package:big_red/pages/services_form.dart';
 import 'package:big_red/services/services.dart';
 import 'package:big_red/services/userServices.dart';
@@ -91,14 +91,15 @@ class _HomePageState extends State<HomePage> {
                                 //     ),
                                 //   ),
                                 // );
-                                bool somethingHappens =
-                                    await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => ServiceDetails(
-                                      service: services[index],
-                                    ),
-                                  ),
-                                );
+                                bool somethingHappens = false;
+                                // bool somethingHappens =
+                                //     await Navigator.of(context).push(
+                                //   MaterialPageRoute(
+                                //     builder: (context) => ServiceDetails(
+                                //       service: services[index],
+                                //     ),
+                                //   ),
+                                // );
                                 if (somethingHappens == true) {
                                   setState(() {
                                     servicesListView;

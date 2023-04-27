@@ -3,9 +3,11 @@ import 'package:big_red/services/userServices.dart';
 import 'package:big_red/utils/custom_appBar.dart';
 import 'package:big_red/utils/custom_bootom_tabbar.dart';
 import 'package:big_red/utils/side_navbar.dart';
+import 'package:big_red/utils/theme_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class UserHomePage extends StatefulWidget {
   final User user;
@@ -22,6 +24,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
+  String _searchQuery = '';
 
   void _onTabTapped(int index) {
     setState(() {
@@ -29,8 +32,16 @@ class _UserHomePageState extends State<UserHomePage> {
     });
   }
 
+  void _updateSearchQuery(String newQuery) {
+    setState(() {
+      _searchQuery = newQuery;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+
     return StreamBuilder<UsersModel>(
         stream: tempUser,
         builder: (context, snapshot) {
@@ -40,6 +51,8 @@ class _UserHomePageState extends State<UserHomePage> {
               appBar: CustomAppBar(
                 scaffoldKey: scaffoldKey,
                 searchHint: switchSearchHint(),
+                isDark: themeProvider.isDark,
+                onSearchQueryChanged: _updateSearchQuery,
               ),
               drawer: SideNav(
                   user: widget.user, usersModel: snapshot.data as UsersModel),
@@ -66,18 +79,18 @@ class _UserHomePageState extends State<UserHomePage> {
     switch (_currentIndex) {
       case 0:
         // return CarsTab();
-        return const Center(
-          child: Text('Cars Tab'),
+        return Center(
+          child: Text('Cars Tab $_searchQuery'),
         );
       case 1:
         // return ServicesTab();
-        return const Center(
-          child: Text('Services Tab'),
+        return Center(
+          child: Text('Services Tab $_searchQuery'),
         );
       case 2:
         // return ChatsTab();
-        return const Center(
-          child: Text('Chats Tab'),
+        return Center(
+          child: Text('Chats Tab $_searchQuery'),
         );
       default:
         return Container();
